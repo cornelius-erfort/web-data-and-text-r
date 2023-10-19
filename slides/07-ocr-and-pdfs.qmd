@@ -1,0 +1,123 @@
+---
+title: "Week 07: OCR and PDFs"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-05-30"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+library(rvest)
+library(xml2)
+
+```
+
+## Plan for today
+
+-   Housekeeping :broom:
+
+-   Exercise for today
+
+-   Live coding
+
+## Housekeeping :broom:
+
+-   Any questions?
+-   Assignment from last week
+
+## Files
+
+-   Texts (doc, xls, html, txt, json, pdf)
+-   Images (gif, png, jpg)
+-   Videos (avi, mp4)
+-   Audio (mp3, wav)
+
+------------------------------------------------------------------------
+
+## PDFs
+
+![](nrw.png){.absolute top="50" width="1600"}
+
+## PDFs
+
+-   `pdftools` package
+-   `tabulizer` package (not on CRAN, but better with two column PDFs)
+-   `extract_text(pdf, pages)`
+
+## OCR
+
+![](sozialismus.png){.absolute top="50" width="1600"}
+
+## OCR
+
+-   `tesseract` package
+-   `ocr(image, eng)`
+-   `tesseract_download(language, datapath)`
+
+## Images
+
+With text:
+
+![](poster.png){.absolute top="50" height="1600"}
+
+## Images
+
+Other features: Faces, age, gender, emotion, ...
+
+![](mexico.png){.absolute top="50" width="1600"}
+
+## Live coding
+
+------------------------------------------------------------------------
+
+## Takeaways this week
+
+-   Text data can come in messy forms.
+-   R can help.
+
+------------------------------------------------------------------------
+
+## Next week
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+Readings :book: - [Munzert et al. 2014, Chapter 11 (skip 11.4)](https://onlinelibrary.wiley.com/doi/10.1002/9781118834732.ch11)
+:::
+
+::: {.column width="50%"}
+`Coding` :robot:
+
+-   Exercise 07
+:::
+:::
+
+## Tips for the exercises
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:

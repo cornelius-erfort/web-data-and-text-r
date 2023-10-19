@@ -1,0 +1,241 @@
+---
+title: "Session 1: Nuclear power"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-04-18"
+date-format: long
+from: markdown+emoji
+---
+
+## Primer: Nuclear power
+
+-   What can we do with R?
+-   Get the location of all nuclear plant worldwide
+-   Calculate the distance to the closest power plant for everyone
+
+------------------------------------------------------------------------
+
+### Installing and loading packages
+
+What are packages?
+
+```{r install}
+# install.packages("rvest")
+# install.packages("httr")
+# install.packages("tidyverse")
+# install.packages("stringr")
+# install.packages("OpenStreetMap")
+# install.packages("shiny")
+# install.packages("leaflet")
+# install.packages("sf")
+# install.packages("parzer")
+# install.packages("tidygeocoder")
+# install.packages("margins")
+# install.packages("qrcode")
+# install.packages("jsonlite")
+
+```
+
+```{r packages , echo = T}
+#| code-line-numbers: 1-4
+library(tidyverse)
+library(rvest)
+library(httr)
+library(stringr)
+library(sf)
+library(parzer)
+library(OpenStreetMap)
+library(shiny)
+library(leaflet)
+library(tidygeocoder)
+library(margins)
+library(qrcode)
+library(jsonlite)
+```
+
+------------------------------------------------------------------------
+
+## Scrape list of power plants from Wikipedia
+
+Extract the HTML table and get the coordinates. What is an HTML?
+
+```{r wiki, echo = T}
+#| code-line-numbers: 2
+# Download Wikipedia HTML using httr
+html <- GET("https://en.wikipedia.org/wiki/List_of_nuclear_power_stations") %>% content
+
+# Extract second HTML table using rvest
+coord_table <- html_table(html)[[2]]
+```
+
+------------------------------------------------------------------------
+
+### Convert the coordinates into an R object
+
+```{r coords, echo = T}
+# Extract latitude and longitude using stringr and regex, and parse using parzer
+coord_table$lat <- coord_table$Location %>% str_extract("[:digit:]{1,3}\\.[:digit:]{1,10}°(N|S)") %>% parse_lat
+coord_table$long <- coord_table$Location %>% str_extract("[:digit:]{1,3}\\.[:digit:]{1,10}°(E|W)") %>% parse_lon
+
+# Convert latitude and longitude into an R object for coordinates
+nuclear_coords <- st_as_sf(x = coord_table, coords = c("long", "lat"))$geometry
+```
+
+------------------------------------------------------------------------
+
+## Your turn: Quick survey
+
+(You don't have to answer truthfully!)
+
+```{r qrcode}
+qr_code("https://forms.gle/3yDXwZXAxRYSqa527") %>% plot
+
+```
+
+<https://forms.gle/3yDXwZXAxRYSqa527>
+
+(Change input, and re-render presentation!)
+
+------------------------------------------------------------------------
+
+### Import survey data from Google Forms
+
+```{r survey, echo = T}
+# Import data from Google Forms
+survey <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vQD8tz0k_IUtETr7Znro8XbUc0WRfukmE7mbwh3lO_VchqxIXFGIQOZQxCHzXsdF3DS2z6IhHnWBt7F/pub?gid=1847692952&single=true&output=csv")
+names(survey)[2:3] <- c("city", "nuclear")
+survey$nuclear <- !str_detect(survey$nuclear, "NOT")
+
+survey <- filter(survey, city != "")
+
+```
+
+------------------------------------------------------------------------
+
+```{r show-data, echo = F}
+survey
+```
+
+------------------------------------------------------------------------
+
+### Get coordinates for the cities
+
+What is an API?
+
+```{r geocode, echo = T}
+# Geocode city
+
+apikey <- readLines("apikey.txt") %>% suppressWarnings()
+
+for (i in 1:nrow(survey)) {
+  # print(i)
+  city <- survey$city[i]
+  print(city)
+  url <- str_c("https://maps.googleapis.com/maps/api/geocode/json?address=", city %>% URLencode(), "&key=", apikey) 
+  response <- GET(url) %>% content
+  # print((response %>% unlist %>% length))
+  if ((response %>% unlist %>% length) < 10) next
+  survey$long[i] <- response$results[[1]]$geometry$location$lng
+  survey$lat[i] <- response$results[[1]]$geometry$location$lat
+}
+
+# geocode(survey, city = "city") 
+# survey <- geocode(survey, city = "city") 
+
+survey <- survey %>% filter(!is.na(lat))
+student_coords <- st_as_sf(x = survey, coords = c("long", "lat"))$geometry
+survey$distance <- sapply(student_coords, function(x) min(st_distance(x, nuclear_coords, byid=T)))*100
+
+
+```
+
+------------------------------------------------------------------------
+
+### Get coordinates for the cities
+
+```{r}
+select(survey, c(city, nuclear, long, lat, distance))
+```
+
+------------------------------------------------------------------------
+
+### Calculate distances
+
+```{r distances, echo = T}
+# Calculate nearest nuclear plant for each student
+nuclear_students <- st_distance(student_coords, nuclear_coords, byid=T)
+
+min_distance <- sapply(student_coords, function(x) which.min(st_distance(x, nuclear_coords, byid=T)))
+```
+
+------------------------------------------------------------------------
+
+## Make a leaflet
+
+What is a leaflet?
+
+```{r leaflet, echo = T}
+# Make leaflet
+myleaf <- leaflet() %>%
+  addProviderTiles(providers$Stadia.StamenTonerLite) %>%
+  addCircleMarkers(data = nuclear_coords, color = "red", 
+                   label = coord_table$`Power station`) %>% 
+  addCircleMarkers(data = student_coords, color = "blue",
+                   label = str_c(survey$city, ", ", ifelse(survey$nuclear, "for", "against"), " nuclear")) 
+```
+
+------------------------------------------------------------------------
+
+### Calculate distances
+
+```{r lines, echo = T}
+# Make dataframe for lines between students and plants
+nuclear_points <- nuclear_coords[min_distance]  %>% st_coordinates() %>% as.data.frame()
+names(nuclear_points) <- c("long", "lat")
+student_points <- st_coordinates(student_coords) %>% as.data.frame()
+names(student_points) <- c("long", "lat")
+nuclearlines <- rbind(nuclear_points, student_points)
+nuclearlines$group <- rep(1:nrow(survey), 2)
+```
+
+------------------------------------------------------------------------
+
+### Add more lines
+
+```{r polylines, echo = T}
+# Add lines
+for(group in unique(nuclearlines$group)) {
+  myleaf <- myleaf %>% 
+    addPolylines(data = nuclearlines[nuclearlines$group == group, ], 
+                 lng = ~long, lat = ~lat, group = ~group)
+}
+```
+
+------------------------------------------------------------------------
+
+## Show map
+
+```{r show}
+# Show leaflet
+myleaf
+```
+
+# Simple logistic regression
+
+How can we use the data we collected?
+
+```{r regression, echo = T}
+# Logistic regression
+(mymodel <- glm(nuclear ~ distance, family = "binomial", survey)) %>% summary
+
+cplot(mymodel)
+```

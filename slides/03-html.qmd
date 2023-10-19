@@ -1,0 +1,240 @@
+---
+title: "Week 03: HTML"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-05-02"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+```
+
+## Plan for today
+
+-   Housekeeping :broom:
+-   Research article and discussion
+-   HTML :computer:
+-   CSS
+-   `rvest` and `xml2`
+-   Live coding
+-   Exercise
+
+## Housekeeping :broom:
+
+-   Any questions organizational questions?
+-   Any problems with R or Posit Cloud?
+-   Readings
+
+------------------------------------------------------------------------
+
+## Presentation
+
+------------------------------------------------------------------------
+
+## HTML
+
+-   HyperText Markup Language
+-   Helps us find the information we want
+
+------------------------------------------------------------------------
+
+## HTML Syntax
+
+. . .
+
+``` {.html code-line-numbers="|1|5,10|6|7|9"}
+<html>
+<head>
+  <title>Page title</title>
+</head>
+<body>
+  <h1 id='first'>A heading</h1>
+  <p>Some text &amp; <b>some bold text.</b></p>
+  <img src='myimg.png' width='100' height='100'>
+  <p>This is a <a href="https://www.google.com">Link</a></p>
+</body>
+```
+
+------------------------------------------------------------------------
+
+## CSS
+
+. . .
+
+``` {.html code-line-numbers="3|7|8|10"}
+<html>
+<head>
+<link rel="stylesheet" href="mystyle.css">
+</head>
+<body>
+  <h1 id='first'>A heading</h1>
+  <p class = "main-text">Some text &amp; <b>some bold text.</b></p>
+  <p>This is a <a href="https://www.google.com" class = "important-link">Link</a></p>
+  <div>
+    <p id = "twitter">Follow us on Twitter.</p>
+  </div>
+
+</body>
+```
+
+------------------------------------------------------------------------
+
+## CSS path
+
+-   `elements` are referred to by their name, e.g. `p`
+
+. . .
+
+-   Elements within other elements can be referred to: `div p`
+
+. . .
+
+-   The `class` attribute is referred to with a dot, e.g. `.important-link`
+
+. . .
+
+-   The `id` attribute is referred to with a hash, e.g. `#twitter`
+
+------------------------------------------------------------------------
+
+## View the source code in the browser
+
+[MPs from the 17th Bundestag](https://webarchiv.bundestag.de/archive/2013/1212/bundestag/abgeordnete17/alphabet/index.html), CSS path: `.linkIntern`
+
+```{r bundestag}
+qr_code("https://webarchiv.bundestag.de/archive/2013/1212/bundestag/abgeordnete17/alphabet/index.html") %>% plot
+```
+
+<https://webarchiv.bundestag.de/archive/2013/1212/bundestag/abgeordnete17/alphabet/index.html>
+
+------------------------------------------------------------------------
+
+## View the source code in the browser
+
+[Political scientists on Wikipedia](https://en.wikipedia.org/wiki/List_of_political_scientists), CSS path: `h2+ ul li > a:nth-child(1)`
+
+```{r polsci}
+qr_code("https://en.wikipedia.org/wiki/List_of_political_scientists") %>% plot
+```
+
+<https://en.wikipedia.org/wiki/List_of_political_scientists>
+
+------------------------------------------------------------------------
+
+## Selector Gadget
+
+[MPs from the 17th Bundestag](https://webarchiv.bundestag.de/archive/2013/1212/bundestag/abgeordnete17/alphabet/index.html), CSS path: `.linkIntern`
+
+[Political scientists on Wikipedia](https://en.wikipedia.org/wiki/List_of_political_scientists), CSS path: `h2+ ul li > a:nth-child(1)`
+
+------------------------------------------------------------------------
+
+## CSS Diner
+
+```{r css}
+qr_code("https://flukeout.github.io/") %>% plot
+```
+
+## <https://flukeout.github.io/>
+
+## Package `xml2`
+
+-   `read_html()`
+
+. . .
+
+-   `read_html("http://rvest.tidyverse.org/")`
+
+. . .
+
+-   `read_html("myfiles/myhtml.html")`
+
+## Package `rvest`
+
+-   `html_elements(html, css = "your css path")` gives you the elements that fit to your css path
+
+. . .
+
+-   `html_text2(html)` gives you the content/text of the elements
+
+. . .
+
+-   `html_attr(html, name = "name of the html attribute")` gives you the values/texts of the html attribute
+
+## Live coding
+
+-   `|>`
+
+. . .
+
+-   `%>%` (not part of base R, need to load e.g. `dplyr`)
+
+. . .
+
+-   Instead of writing `read_html(myhtml)` you can write `myhtml |> read_html()` or `myhtml %>% read_html()`
+
+------------------------------------------------------------------------
+
+## Webscraping workflow
+
+-   Brainstorming
+-   What comes to mind?
+-   Which steps are there?
+-   What could go wrong?
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Next week
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+Readings :book:
+
+-   Automated Data Collection with R
+    -   [Ch. 9.2.1](https://doi.org/10.1002/9781118834732.ch9)
+-   Grolemund and Wickham (2023)
+    -   [Ch. 15](https://r4ds.hadley.nz/strings.html)
+    -   [Ch. 16](https://r4ds.hadley.nz/regexps.html)
+:::
+
+::: {.column width="50%"}
+`Coding` :robot:
+
+-   Exercise 03
+-   Play CSS Diner
+-   Munzert et al. 2014, [Ch. 2](https://doi.org/10.1002/9781118834732.ch2), Problems 1-6
+:::
+:::
+
+## Tips for the exercises
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:

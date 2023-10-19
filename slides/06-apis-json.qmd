@@ -1,0 +1,286 @@
+---
+title: "Week 06: APIs, JSON and other file formats"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-05-23"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+library(rvest)
+library(xml2)
+
+```
+
+## Plan for today
+
+-   Housekeeping :broom:
+-   APIs
+-   JSON
+-   Other file formats
+-   Live coding
+-   Exercise
+
+## Housekeeping :broom:
+
+-   Any questions?
+-   Assignment from last week
+
+## Recap
+
+First step
+
+```{mermaid}
+flowchart LR
+  A(URL)-- "read_html(URL)" --> B(HTML file)
+  B -- "rvest/regex" --> C(Data)
+  B -- "rvest" --> D(list of URLs)
+```
+
+or
+
+```{mermaid}
+flowchart LR
+  A(URL)-- "manually" --> B(URL pattern)
+  B -- "str_c(URL, pattern)" --> C(list of URLs)
+```
+
+# Recap
+
+Using loops to download multiple HTMLs
+
+```{mermaid}
+flowchart LR
+  B(URL i)-->C{filename}
+  C--"if(file.exists(filename))"-->D("i+1")
+  D-.->B
+  C--"if not"-->G("read_html() + <br>write_html()")
+  G-->H("i+1")
+  H-.->B
+```
+
+# Recap
+
+Using loops to extract data from multiple HTMLs
+
+```{mermaid}
+flowchart LR
+  A(multiple files)-- "list.files()"  --> B(list of files)
+```
+
+
+```{mermaid}
+flowchart LR
+  B(File i)--"rvest/regex"-->C(Data)
+  C--"add to"-->D("Dataframe")
+  D-->E
+  E(i+1)-.->B
+```
+
+## APIs
+
+-   Webscraping often uses the user interface (i.e. the visual website)
+-   But websites often provide data in a more efficient way
+-   Application Programming Interfaces
+
+## APIs
+
+-   Standardized way to request data
+-   API returns only the requested data
+-   Some APIs are free
+-   Some APIs require authentication
+
+## API example
+
+``` {.html code-line-numbers="|1-2|12-15"}
+{"latitude":54.100006,
+"longitude":12.100006,
+"generationtime_ms":0.27310848236083984,
+"utc_offset_seconds":0,
+"timezone":"GMT",
+"timezone_abbreviation":"GMT",
+"elevation":13.0,
+"daily_units":
+  {"time":"iso8601",
+  "temperature_2m_max":"°C"},
+"daily":
+  {"time":
+      ["2020-05-16","2020-05-17","2020-05-18","2020-05-19","2020-05-20"],
+  "temperature_2m_max":
+      [14.0,16.4,13.6,16.0,15.1]}}
+```
+
+<https://archive-api.open-meteo.com/v1/archive?latitude=54.09&longitude=12.14&start_date=2020-05-16&end_date=2020-05-17&hourly=temperature_2m>
+
+## APIs more examples
+
+-   Geographic coordinates
+-   Twitter data
+-   Uber price estimation
+
+## APIs more examples
+
+List of free APIs
+
+```{r }
+qr_code("https://github.com/public-apis/public-apis") %>% plot
+```
+
+<https://github.com/public-apis/public-apis>
+
+## R packages for APIs
+
+-   Often R packages make it easier to use APIs in R
+
+List of R packages
+
+```{r }
+qr_code("https://gist.github.com/zhiiiyang/fc19995f7e350f3c7fb940757f6213cf#file-apis-md") %>% plot
+```
+
+<https://gist.github.com/zhiiiyang/fc19995f7e350f3c7fb940757f6213cf#file-apis-md>
+
+## R packages for APIs
+
+-   `rtweet` package to access Twitter API
+-   Twitter API requires authentication
+
+## File formats
+
+Which file formats do we need to know?
+
+. . .
+
+-   XML `xml2::read_xml()`
+-   CSV `readr::read_csv()`
+-   XLSX `openxlsx::read.xlsx()`
+-   JSON
+
+. . .
+
+Next week:
+
+-   PDF
+-   JPG etc.
+
+## JSON
+
+-   Data are stored in key-value pairs: `{"key": "value"}`
+-   JSON is hierarchical, unlike tables/dataframes
+-   Curly brackets `{}` define objects
+-   Square brackets `[]` define arrays (ordered sequence/list of values)
+
+## JSON
+
+``` {.html code-line-numbers="|1-12|3|5-8|9|13-15"}
+{"indy movies" :[
+  {
+  "name" : "Raiders of the Lost Ark",
+  "year" : 1981,
+  "actors" : {
+      "Indiana Jones": "Harrison Ford",
+      "Dr. Rene Belloq": "Paul Freeman"
+    },
+  "producers": ["Frank Marshall", "George Lucas", "Howard Kazanjian"],
+  "budget" : 18000000,
+  "academy_award_ve": true
+  },
+{
+"name" : "Another Movie"
+}]
+}
+```
+
+## JSON
+
+```{r echo = T}
+library(jsonlite)
+json <- '{"indy movies" :[
+  {"name" : "Raiders of the Lost Ark",
+  "year" : 1981,
+  "actors" : {
+      "Indiana Jones": "Harrison Ford",
+      "Dr. Rene Belloq": "Paul Freeman"}},
+{"name" : "Another Movie",
+"year" : 1999
+}]}'
+  
+fromJSON(json)
+```
+
+## Hierarchical data
+
+-   We usually work with rectangular data.
+-   How can we transform hierarchical data to rectangular?
+
+. . .
+
+        
+- add additional columns: `tidyr::unnest_wider()`
+- add additional rows: `tidyr::unnest_longer()`
+
+
+
+## Hierarchical data
+
+-   Packages: `jsonlite` and `tidyr`
+-   `jsonlite::parse_json()`
+-   `jsonlite::fromJSON()`
+
+## Live coding
+
+------------------------------------------------------------------------
+
+## Takeaways this week
+
+-   R can handle different file formats.
+-   When data is not rectangular, we can transform it.
+
+------------------------------------------------------------------------
+
+## Next week
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+Readings :book:
+
+-   Hoffmann, Mark (2021) -[Chapter 11](https://bookdown.org/markhoff/css/working-with-weird-data-an-example.html)
+:::
+
+::: {.column width="50%"}
+`Coding` :robot:
+
+-   Exercise 06
+:::
+:::
+
+## Tips for the exercises
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:

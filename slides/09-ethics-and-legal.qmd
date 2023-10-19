@@ -1,0 +1,223 @@
+---
+title: "Week 09: Ethics and legal aspects"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-06-13"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+library(rvest)
+library(xml2)
+
+```
+
+## Plan for today
+
+-   Presentations (30min)
+-   Housekeeping :broom:
+-   Course evaluation (10min)
+-   Exercise for next week
+-   Ethics, legal, and technical aspects (45min)
+
+## Housekeeping :broom:
+
+-   Any questions?
+
+## Course evaluation
+
+![](evaluation.png){.absolute top="50" width="1400"}
+
+## Course evaluation
+
+-   Access via the Moodle course, on the right
+-   Please evaluate the course
+-   The evaluation is important for you and for me
+-   We can discuss the evaluation results in class
+
+```{r }
+qr_code("https://moodle.hu-berlin.de/course/view.php?id=119711") %>% plot
+```
+
+<https://moodle.hu-berlin.de/course/view.php?id=119711>
+
+------------------------------------------------------------------------
+
+![](workflow2.png){.absolute top="20" width="2000"}
+
+## This week
+
+-   Is webscraping ethical?
+-   Is webscraping legal?
+-   What can we do to be polite?
+
+## Disclaimer
+
+-   I am not a legal expert, so this is not legal advice!
+-   I will focus on what you definitely should NOT do.
+-   Scraping often happens in a gray area.
+
+## Ethics
+
+### Why care?
+
+-   We don't want to harm anyone
+-   Privacy regulation, GDPR
+-   Publishers' ethical standards
+
+## Ethics
+
+### Personally identifiable information (PII)
+
+-   What are PII?
+
+GDPR: "'Personal data' means any information relating to an identified or identifiable natural person (...)"
+
+-   Name, email address, phone number, photos, date of birth, license plate number, ...
+
+## Ethics
+
+### Sensitive information
+
+-   Racial or ethnic origin
+-   Political opinions
+-   Health data -...
+
+## Ethics
+
+### Privacy regulation, GDPR
+
+-   Data collection needs a legal basis: consent or legitimate interest
+-   Research may be a "legitimate interest"
+-   Weigh the privacy rights with your right to research
+-   Minimize data, anonymize, document,...
+
+## Legal aspects
+
+### Copyright laws
+
+-   Applicable are usually the laws where you scrape
+-   In Germany, almost every text is copyrighted
+-   Be careful not to upload copyrighted material!
+-   Be especially careful with commercial data (e.g. newspaper articles)!
+-   Exception: Open Access Licenses
+
+## Legal aspects
+
+### "Text Data Mining"
+
+-   New law (UrhG) since 2021
+-   Generally allows scraping, even of copyrighted materials
+-   Especially for non-commercial research
+-   Does not allow to publish publicly!
+
+## Legal aspects
+
+### "Text Data Mining"
+
+-   Written terms on a website might not be binding
+-   But must respect technical barriers (e.g. robots.txt)
+
+## Technical aspects
+
+-   Technical barriers
+-   Delays/rate limits
+-   robots.txt
+
+## Technical aspects
+
+### Technical barriers
+
+-   Password protection
+-   Captchas
+-   IP blocking
+-   ...
+
+## Technical aspects
+
+### robots.txt
+
+-   Concepts: User-agent, Directories/folders, Allow/Disallow, Delays
+-   User-agent: Different rules for different users/robots
+-   Directories: Different rules for different parts of the website
+
+Example:
+
+``` html
+User-agent: *
+Crawl-delay: 2
+Allow: /files/
+
+User-Agent: Googlebot
+Disallow: /search/
+```
+
+## Technical aspects
+
+### `polite` package
+
+"Be responsible when scraping data from websites by following polite principles: introduce yourself, ask for permission, take slowly and never ask twice."
+
+-   Automatically checks robots.txt
+-   Adds delays
+-   Adds headers
+-   ...
+
+------------------------------------------------------------------------
+
+## Takeaways this week
+
+-   Before you start scraping: Think about the legal and ethical implications of your project!
+
+------------------------------------------------------------------------
+
+## Next week
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+Readings :book:
+
+-   [Wilkerson & Casas (2017)](https://doi.org/10.1146/annurev-polisci-052615-025542)
+
+-   [Welbers, Van Atteveldt & Benoit (2017)](https://doi.org/10.1080/19312458.2017.1387238)
+
+-   [Wikipedia: Natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing)
+:::
+
+::: {.column width="50%"}
+`Coding` :robot:
+
+-   Exercise 08 (Your own web scraper)
+:::
+:::
+
+## Tips for the exercises
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:

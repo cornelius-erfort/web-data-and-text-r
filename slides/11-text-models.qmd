@@ -1,0 +1,327 @@
+---
+title: "Week 11: Text Models"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-07-04"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+library(rvest)
+library(xml2)
+library(quanteda)
+library(seededlda)
+library(knitr)
+library(quanteda.textmodels)
+
+```
+
+## Plan for today
+
+-   Housekeeping :broom:
+-   Recap: Text as data
+-   Supervised text models in Quanteda
+-   Live coding
+
+## Housekeeping :broom:
+
+-   Any questions?
+-   Assignment
+
+## Assignment
+
+-   Very interesting projects
+-   Best practice: Make it simple
+-   Download HTMLs and extract info in separate loops
+
+# Recap
+
+## What can we learn from text?
+
+-   **Text classification**
+-   Scaling
+-   Sentiment analysis
+-   Named entity recognition
+-   Word embeddings
+-   ...
+
+## Text Analysis in R
+
+![](hcms_a_1387238_f0001_b.jpeg){.absolute top="200" width="1600"} (Welbers et al. 2017)
+
+## How do we quantify text?
+
+-   Text length, number of words/sentences, ...
+-   Counting specific words
+-   Document-feature\* matrix (Basis for text models)
+
+## Dictionary Approach
+
+-   Create dictionary
+-   Count how often each word of your dictionary appears in each text
+
+## Dictionary Approach
+
+For example:
+
+-   Negative words: nasty, bad, boring
+-   Positive words: happy, nice, sweet
+
+Classification:
+
+-   Negative words \> positive words -\> negative
+-   Negative words \< positive words -\> positive
+
+## Dictionary Approach
+
+Existing dictionaries:
+
+-   `quanteda.dictionaries`
+-   `quanteda.sentiment`
+
+# From text to data
+
+1.  Document-feature matrix
+2.  Selecting features
+3.  Frequent words, "stopwords"
+4.  Infrequent words
+5.  Stemming
+
+## Document-feature matrix
+
+-   Rows: documents
+-   Columns: features
+-   Order of the words gets lost! ("bag of words")
+
+## Selecting features
+
+-   Frequent words, stopwords
+-   Infrequent words
+-   Both don't help us build a general model!
+
+## Stemming
+
+Example:
+
+-   **pledg**e
+-   **pledg**es
+-   **pledg**ed
+-   **pledg**ing
+
+## Text models
+
+-   Supervised
+-   Unsupervised
+
+## Text models
+
+-   Supervised: Like a regression, where each word is a variable, and each text is an observation
+-   Unsupervised: Like a factor analysis
+
+## Unsupervised text models
+
+-   Do not require training data
+-   Identify clusters in your texts
+-   Clusters: Texts that have many words in common
+
+## Supervised text models
+
+-   Require training data
+-   Training data: number of texts with known classification
+-   Can be used to classify new texts
+
+## Supervised text models
+
+Training data
+
+```{r}
+train <- data.frame(
+  text = c("A very good proposal", "We support", "We strongly oppose", "We agree", "We oppose the president's plan", "We are pleased with the good work"),
+  label = c("pos", "pos", "neg", "pos", "neg", "pos"))
+train %>% kable
+```
+
+## Supervised text models
+
+Test data
+
+```{r}
+test <- data.frame(
+  text = c("We show support", "We condemn the president's actions", "We withdraw our support"),
+  label = c("pos", "neg", "neg"), prediction = c("?", "?", "?"))
+test %>% kable
+```
+
+## Supervised text models
+
+Train DFM
+
+```{r echo = T}
+(train_dfm <- train$text %>% tokens %>% dfm)
+```
+
+------------------------------------------------------------------------
+
+## Supervised text models
+
+Test DFM
+
+```{r echo = T}
+(test_dfm <- test$text %>% tokens %>% dfm)
+```
+
+------------------------------------------------------------------------
+
+## Supervised text models
+
+Test DFM
+
+```{r echo = T}
+(test_dfm <- dfm_match(test_dfm, featnames(train_dfm)))
+
+```
+
+------------------------------------------------------------------------
+
+## Supervised text models
+
+Text model and prediction
+
+```{r echo = T}
+mymodel <- textmodel_nb(train_dfm, train$label)
+predict(mymodel, test_dfm) %>% kable
+```
+
+------------------------------------------------------------------------
+
+## Supervised text models
+
+Validate
+
+```{r echo = T}
+test$prediction <- predict(mymodel, test_dfm)
+test %>% kable
+```
+
+------------------------------------------------------------------------
+
+## Supervised text models
+
+Validate
+
+```{r echo = T}
+test$valid <- test$label == test$prediction
+test %>% kable
+```
+
+------------------------------------------------------------------------
+
+## Supervised text models
+
+Model weights
+
+```{r echo = T}
+mymodel$param %>% print
+```
+
+------------------------------------------------------------------------
+
+## Validation
+
+-   Easy for supervised models
+-   Difficult for unsupervised models
+
+## Validation
+
+-   We split our texts with known labels into training and test
+-   We build our model only with training data
+-   We then test our model on the test data
+
+## Validation
+
+Example: Economy vs. Not economy
+
+-   Accuracy: Share of texts correctly classified (TP+TN)/(P+N)
+-   Precision: Share of texts about economy classified as economy TP/P
+-   Recall: Share of texts about economy of texts classified as economy TP/(TP+TN)
+
+[More info on Wikipedia](https://en.wikipedia.org/wiki/Precision_and_recall)
+
+## Cross validation
+
+The test data that we (randomly) choose can be
+
+-   especially easy to predict
+-   especially difficult to predict
+
+## Cross validation
+
+Example:
+
+-   Split texts into 5 subsamples
+-   Fit text model 5 times
+-   4 splits are always training data
+-   1 split is always test data
+
+## Cross validation
+
+![](cross.png){.absolute top="20" width="1600"}
+
+Source: www.mltut.com/
+
+## Research using text as data
+
+-   Automatically extract protest event data from newspapers [PolDem Protest Event Database](https://poldem.eui.eu/data-overview/#protest-events)
+-   Quantifying issue salience and positions through text ([Manifesto Project](https://manifestoproject.wzb.eu/) )
+-   Identifying the closeness between two texts (lobbying, spread of ideas)
+-   Identify drivers of hate speech on Twitter
+-   Identify social networks by identifying references in texts
+-   Extract information from open survey questions
+-   ...
+
+## Live coding
+
+------------------------------------------------------------------------
+
+## Takeaways this week
+
+-   (Almost) everything a human can extract from text can be automated.
+-   Building simple models (using quanteda) is not that hard.
+
+------------------------------------------------------------------------
+
+## Next week
+
+Is there anything you want to talk about?
+
+-   More advanced text models: Transformer, GPT-4 etc.
+-   Collecting and analyzing images
+-   Social media data
+-   Crawling, Proxies, RSelenium, ...
+-   Geodate, Geocoding
+-   Data management, Github
+
+## Tips for the exercises
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:

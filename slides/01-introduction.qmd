@@ -1,0 +1,132 @@
+---
+title: "Week 01: Introduction"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-04-18"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+```
+
+## Welcome
+
+Automated Web Data Collection And Text As Data :wave:
+
+------------------------------------------------------------------------
+
+## About me
+
+-   PhD student at HU and Hertie School
+-   Graduate school DYNAMICS
+-   Chair of Comparative Political Behavior (Prof. Heike Klüver)
+-   Focus on political science
+-   Behavior of parties, politicians, and voters
+
+------------------------------------------------------------------------
+
+## Why R?
+
+![](rlogo.png){.absolute top="20" right="20" width="200" height="200"} ![](rstudio-logo.png){.absolute top="300" right="20" height="150"}
+
+-   Relatively easy
+-   Free, open source
+-   Job market skill
+-   Large community of users
+-   Many things you can do
+
+------------------------------------------------------------------------
+
+## Why web scraping?
+
+-   Abundance of available data
+-   But often not as a dataset
+-   Web data vs. surveys, experiments etc.
+
+------------------------------------------------------------------------
+
+## Why text as data?
+
+-   Social science research often concerns texts
+-   Abundance of text data
+
+------------------------------------------------------------------------
+
+## Other things you can do with R
+
+-   Data visualization (ggplot2) :bar_chart:
+-   Interactive apps (shiny) :computer:
+-   Statistical analyses :chart_with_upwards_trend:
+-   Beautiful documents, presentations :page_facing_up:
+-   Geodata :world_map:
+
+------------------------------------------------------------------------
+
+## Organizational points
+
+-   Agnes and course size
+-   Moodle
+-   Syllabus
+
+------------------------------------------------------------------------
+
+## Moodle
+
+```{r moodle}
+qr_code("https://moodle.hu-berlin.de/course/view.php?id=119711") %>% plot
+```
+
+<https://moodle.hu-berlin.de/course/view.php?id=119711> (pw: api)
+
+------------------------------------------------------------------------
+
+## Your turn: Quick survey
+
+To get to know you better
+
+```{r survey}
+qr_code("https://forms.gle/mffHDSpdB2Ujyr6M9") %>% plot
+```
+
+<https://forms.gle/mffHDSpdB2Ujyr6M9>
+
+------------------------------------------------------------------------
+
+## Questions?
+
+------------------------------------------------------------------------
+
+## Presentations
+
+-   Presentation schedule next week!
+
+-   Three volunteers for next week?
+
+------------------------------------------------------------------------
+
+## Posit Cloud
+
+```{r posit}
+qr_code("https://posit.cloud/spaces/362605/join?access_code=jqujVQdZu33fyn--Zlibjc1hkpF-N_nPT8dWZvic") %>% plot
+```
+
+[https://posit.cloud/spaces/362605/join?access_code=jqujVQdZu33fyn--Zlibjc1hkpF-N_nPT8dWZvic](https://posit.cloud/spaces/362605/join?access_code=jqujVQdZu33fyn--Zlibjc1hkpF-N_nPT8dWZvic)
+
+------------------------------------------------------------------------

@@ -1,0 +1,256 @@
+---
+title: "Week 02: Basics"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-04-25"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+```
+
+## Plan for today
+
+-   Housekeeping :broom:
+-   Introduction round :wave:
+-   Research article and discussion
+-   The basics of R :computer:
+-   Webscraping workflow
+-   Presentation schedule :calendar:
+
+## Housekeeping :broom:
+
+-   Any questions organizational questions?
+-   Any problems with R or Posit Cloud?
+-   Readings
+
+------------------------------------------------------------------------
+
+## Introduction round :hugs:
+
+-   Name
+-   Research interests (if any)
+-   Prior R experience
+-   ...
+
+## Presentation
+
+![](siegel_badaan.png){width="40%"}
+
+------------------------------------------------------------------------
+
+## Readings
+
+-   Grolemund and Wickham (2023!): R for Data Science
+
+------------------------------------------------------------------------
+
+## The basics of R
+
+-   Objects
+-   Classes
+-   Functions
+-   Packages
+-   `tidyverse`
+
+------------------------------------------------------------------------
+
+## Objects
+
+-   R is an object-oriented programming language (unlike Stata)
+-   We can store data in objects, by naming it and assigning a value using `<-`.
+
+. . .
+
+```{r objects, echo = T}
+myobject <- 10
+myobject
+```
+
+------------------------------------------------------------------------
+
+## Classes
+
+-   Each object has a class, depending on the type of data that we store
+
+. . .
+
+```{r numeric, echo = T}
+# A number (numeric)
+class(myobject)
+```
+
+. . .
+
+```{r character, echo = T}
+# A character
+myobject_2 <- "science"
+class(myobject_2)
+```
+
+. . .
+
+```{r logical, echo = T}
+# A logical
+myobject_3 <- TRUE
+class(myobject_3)
+```
+
+------------------------------------------------------------------------
+
+## Vectors
+
+-   A vector is an object with several elements
+-   We use `c()`to combine several parts into one vector
+-   A vector has only one class
+
+. . .
+
+```{r vector, echo = T}
+myvector <- c(10, 50, 70, 5)
+myvector
+```
+
+## Functions 1
+
+-   Now we can use objects to do things
+
+```{r functions1, echo = T}
+myobject + 100
+```
+
+. . .
+
+```{r functions2, echo = T}
+myvector^2
+```
+
+## Functions 2
+
+-   We can call functions by their name like this `function_name(myobject)`
+
+. . .
+
+```{r functions3, echo = T}
+sum(100 + 200)
+sum(myvector)
+```
+
+--
+
+## Packages :package:
+
+<br>
+
+What is a `package`?
+
+-   Collection of functions, data, and documentation
+-   Gives you more possibilities than `base` R
+-   Often written by users
+
+. . .
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-2|4-5"
+# Install (only once)
+install.packages("tidyverse")
+
+# Load (best to do this at the top of your script)
+library("tidyverse")
+```
+
+------------------------------------------------------------------------
+
+## Misc
+
+-   Missing data `NA`
+-   Help for a function `?function()`
+
+------------------------------------------------------------------------
+
+## Live coding
+
+------------------------------------------------------------------------
+
+## Webscraping workflow
+
+-   Brainstorming
+-   What comes to mind?
+-   Which steps are there?
+-   What could go wrong?
+
+------------------------------------------------------------------------
+
+## Presentation schedule
+
+-   Put down your name in the Etherpad on Moodle
+-   3-5 presenters per week
+-   Please let your group members and me know, when you drop the course.
+
+```{r etherpad}
+qr_code("https://moodle.hu-berlin.de/mod/etherpadlite/view.php?id=3947299") %>% plot
+```
+
+<https://moodle.hu-berlin.de/mod/etherpadlite/view.php?id=3947299>
+
+------------------------------------------------------------------------
+
+```{r etherpad-large}
+qr_code("https://moodle.hu-berlin.de/mod/etherpadlite/view.php?id=3947299") %>% plot
+```
+
+<https://moodle.hu-berlin.de/mod/etherpadlite/view.php?id=3947299>
+
+------------------------------------------------------------------------
+
+## Next week
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+Readings :book:
+
+-   Automated Data Collection with R
+    -   [Chapter 2 (skip 2.4)](https://onlinelibrary.wiley.com/doi/10.1002/9781118834732.ch2)
+-   Grolemund and Wickham (2023)
+    -   [25 Webscraping (skip 25.2)](\href%7Bhttps://r4ds.hadley.nz/webscraping.html)
+:::
+
+::: {.column width="50%"}
+`Coding` :robot:
+
+-   Exercise 02
+:::
+:::
+
+## Tips for the exercies
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:

@@ -1,0 +1,223 @@
+---
+title: "Week 05: Webscraping"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-05-09"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+library(rvest)
+library(xml2)
+
+```
+
+## Plan for today
+
+-   Housekeeping :broom:
+-   Research article and discussion
+-   Assignment from last week
+-   Webscraping workflow
+-   For loops
+-   Live coding
+-   Exercise
+
+## Housekeeping :broom:
+
+-   Any questions/problems?
+
+------------------------------------------------------------------------
+
+## Presentation
+
+------------------------------------------------------------------------
+
+# Webscraping workflow
+
+What we did so far:
+
+-   Download single HTML
+-   Extract data from HTML
+
+But:
+
+-   Data is often on multiple HTMLs
+
+## Group work: Webscraping workflow
+
+-   Groups of 4, 15mins
+-   Brainstorm together and make a detailed flow chart about the steps involved in scraping data from the web.
+-   Think about the examples we had in class and in the exercises.
+-   Which steps are there from idea to dataset for analysis?
+-   What can go wrong? What may be difficult?
+
+## Manipulating URLs
+
+-   Often, the URLs for the HTMLs we need follow a pattern:
+
+`https:///website.com/page/1`, `https:///website.com/page/2`, ...
+
+## Manipulating URLs
+
+-   We can use `stringr` to create a vector of URLs we want to download.
+
+```{r echo = T}
+str_c("https:///website.com/page/", 1:10)
+
+```
+
+## Manipulating URLs
+
+```{r }
+qr_code("https://labour.org.uk/category/latest/press-release") %>% plot
+```
+
+<https://labour.org.uk/category/latest/press-release>
+
+## Collecting links from HTML
+
+-   We can use `rvest` to extract links from HTMLs (href attribute)
+
+```{r echo = T}
+myhtml <- read_html("https://labour.org.uk/category/latest/press-release")
+myelements <- html_elements(myhtml, ".post-preview-compact__link")
+links <- html_attr(myelements, "href")
+links <- str_c("https://labour.org.uk", links)
+head(links)
+
+```
+
+## How do we download multiple HTMLs?
+
+-   For loop
+-   (`sapply()`)
+-   (While loop)
+
+## For loop
+
+```{r echo = T, eval = F}
+for (element in vector) {
+  print(element)  
+}
+
+```
+
+. . .
+
+```{r echo = T}
+for (element in c("one", "two", "three")) {
+  print(element)  
+}
+
+```
+
+## For loop
+
+```{r echo = T}
+for (link in head(links)) {
+  filename <- str_c("labour/", basename(link), ".html")
+  print(filename)
+  myhtml <- read_html(link)
+  write_html(myhtml, file = filename)
+  Sys.sleep(1)
+}
+
+```
+
+## Pause R
+
+For loops create a lot of traffic:
+
+-   `Sys.sleep(seconds)` pauses R for the specified time
+-   Be polite and pause for one or two seconds
+
+## Manage files
+
+-   The number of HTMLs can grow really fast.
+-   We don't want to start from the beginning with every error.
+-   Best practice: Save HTMLs to a local folder.
+
+## Manage files
+
+-   `list.files(folder, full.names = TRUE)` returns a vector with all files (and folders in the folder)
+-   `file.exists(file)` returns TRUE when the file exists, otherwise FALSE
+-   `dir.create(folder)`creates the folder
+
+## Manage files
+
+```{r echo = T, eval = F}
+for (link in links) {
+  filename <- basename(link)
+  if(!file.exists(filename)) next
+  myhtml <- read_html(link)
+  # ...
+}
+```
+
+## Useful functions
+
+-   `if(condition) expression`, if condition: only runs expression if condition is TRUE
+-   `!` Logical NOT operator\`, inverts a logical (`TRUE` -\> `FALSE`, `FALSE` -\> `TRUE`)
+-   `vector_1 %in% vector_2` operator to check whether the elements from vector_1 are in vector_2
+
+## Live coding
+
+------------------------------------------------------------------------
+
+## Takeaways this week
+
+-   Webscraping is an iterative process.
+-   It involves downloading files, extracting information, then downloading more files.
+-   The tools we learned so far already allow us to scrape many websites.
+
+------------------------------------------------------------------------
+
+## Next week
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+Readings :book:
+
+-   Grolemund and Wickham (2023)
+    -   [Ch. 24](https://r4ds.hadley.nz/rectangling)
+-   Automated Data Collection with R
+    -   [Ch. 3 (start at 3.6), and Ch. 9.2.3](https://doi.org/10.1002/9781118834732.ch9)
+:::
+
+::: {.column width="50%"}
+`Coding` :robot:
+
+-   Exercise 05
+:::
+:::
+
+## Tips for the exercises
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:

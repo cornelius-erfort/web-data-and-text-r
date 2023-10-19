@@ -1,0 +1,277 @@
+---
+title: "Week 10: Text as Data"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-06-20"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+# install.packages("quanteda")
+# install.packages("seededlda")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+library(rvest)
+library(xml2)
+library(quanteda)
+library(seededlda)
+library(knitr)
+
+
+```
+
+## Plan for today
+
+-   Housekeeping :broom:
+-   Text as data
+-   Live coding
+
+## Housekeeping :broom:
+
+-   Any questions?
+-   Assignment
+
+## Text as data
+
+What can we measure with text? What can we quantify about text?
+
+5min to gather some ideas:
+
+```{r }
+qr_code("https://www.menti.com/alybudj6xxkx") %>% plot
+```
+
+[menti.com, Enter the code: 8571 0557](https://www.menti.com/alybudj6xxkx)
+
+## What can we learn from text?
+
+-   *Text classification*
+-   Scaling
+-   Sentiment analysis
+-   Named entity recognition
+-   Word embeddings
+-   ...
+
+## Text Analysis in R
+
+![](hcms_a_1387238_f0001_b.jpeg){.absolute top="200" width="1600"} (Welbers et al. 2017)
+
+## Terms
+
+|                    |                                       |
+|--------------------|---------------------------------------|
+| document           | text (word, sentence, paragraph, ...) |
+| corpus             | collection of texts                   |
+| feature/token      | word                                  |
+| dictionary         | collection of words with some meaning |
+| test/training data | texts with known labels               |
+| labels             | category that a text is assigned to   |
+
+## How do we quantify text?
+
+-   Text length, number of words/sentences, ...
+-   Counting specific words
+-   Document-feature\* matrix (Basis for text models)
+
+## Dictionary Approach
+
+-   Create dictionary
+-   Count how often each word of your dictionary appears in each text
+
+## Dictionary Approach
+
+For example:
+
+-   Negative words: nasty, bad, boring
+-   Positive words: happy, nice, sweet
+
+Classification:
+
+-   Negative words \> positive words -\> negative
+-   Negative words \< positive words -\> positive
+
+## Dictionary Approach
+
+Another example:
+
+-   Economy: tax, taxes, interest, economy
+-   Environment: climate, emissions, environment
+
+Classification:
+
+-   More economy words: Economy
+-   More environment words: Environment
+
+## Dictionary Approach
+
+We can start by using `stringr::str_detect()`
+
+```{r echo=T}
+text1 <- "Labour pledges to boost employment and grow the economy"
+text2 <- "They protest the “hostile environment” being created for LGBT+ people"
+texts <- c(text1, text2)
+
+str_detect(texts, "tax|taxes|interest|economy") %>% print
+str_detect(texts, "climate|emissions|environment") %>% print
+
+```
+
+## Dictionary Approach
+
+-   There are many ways to create a dictionary
+-   For many things you can find existing dictionaries
+
+# From text to data
+
+1.  Document-feature matrix
+2.  Selecting features
+3.  Frequent words, "stopwords"
+4.  Infrequent words
+5.  Stemming
+
+## Document-feature matrix
+
+-   Rows: documents
+-   Columns: features
+-   Order of the words gets lost! ("bag of words")
+
+## Document-feature matrix
+
+We can use functions from the `quanteda` package
+
+```{r echo=T}
+dfm(texts) %>% kable()
+```
+
+## Selecting features
+
+-   Frequent words, stopwords
+-   Infrequent words
+-   Both don't help us build a general model!
+
+## Selecting features
+
+```{r echo=T}
+# List of stopwords
+stopwords()[1:10] %>% kable()
+```
+
+```{r echo=T}
+# Remove them
+dfm(texts) %>% dfm_remove(stopwords())  %>% kable()
+```
+
+## Stemming
+
+Example:
+
+-   *pledg*e
+-   *pledg*es
+-   *pledg*ed
+-   *pledg*ing
+
+## Stemming
+
+```{r echo=T}
+# Stem
+dfm(texts) %>% dfm_remove(stopwords()) %>% dfm_wordstem() %>% kable()
+```
+
+## Text models
+
+-   Supervised
+-   Unsupervised
+
+## Text models
+
+-   Supervised: Like a regression, where each word is a variable, and each text is an observation
+-   Unsupervised: Like a factor analysis
+
+## Supervised text models
+
+-   Require training data
+-   Training data: number of texts with known classification
+-   Can be used to classify new texts
+
+## Unsupervised text models
+
+-   Do not require training data
+-   Identify clusters in your texts
+-   Clusters: Texts that have many words in common
+
+## Validation
+
+-   Easy for supervised models
+-   Difficult for unsupervised models
+
+## Validation
+
+-   We split our texts with known labels into training and test
+-   We build our model only with training data
+-   We then test our model on the test data
+
+## Validation
+
+Example: Economy vs. Not economy
+
+-   Accuracy: Share of texts correctly classified (TP+TN)/(P+N)
+-   Precision: Share of texts about economy classified as economy TP/P
+-   Recall: Share of texts about economy of texts classified as economy TP/(TP+TN)
+
+[More info on Wikipedia](https://en.wikipedia.org/wiki/Precision_and_recall)
+
+## Live coding
+
+------------------------------------------------------------------------
+
+## Takeaways this week
+
+-   (Almost) everything a human can extract from text can be automated.
+-   Building simple models (using quanteda) is not that hard.
+
+------------------------------------------------------------------------
+
+## Next week
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+Readings :book:
+
+-   [Quanteda Quick Start Guide](http://quanteda.io/articles/quickstart.html)
+:::
+
+::: {.column width="50%"}
+`Coding` :robot:
+
+-   Exercise 10
+:::
+:::
+
+## Tips for the exercises
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:

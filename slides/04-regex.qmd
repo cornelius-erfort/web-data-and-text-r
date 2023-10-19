@@ -1,0 +1,295 @@
+---
+title: "Week 04: Regular expressions"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-05-09"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+```
+
+## Plan for today
+
+-   Housekeeping :broom:
+-   Research article and discussion
+-   Assignment from last week
+-   Strings
+-   Regular expressions
+-   `stringr`
+-   Live coding
+-   Exercise
+
+## Housekeeping :broom:
+
+-   Any questions organizational questions?
+-   Any problems with R or Posit Cloud?
+-   Readings
+
+------------------------------------------------------------------------
+
+## Presentation
+
+------------------------------------------------------------------------
+
+## Strings
+
+-   Create a string using quotes
+
+. . .
+
+```{r echo = T}
+string1 <- "This is a string"
+string2 <- 'If I want to include a "quote" inside a string, I use single quotes'
+```
+
+------------------------------------------------------------------------
+
+## Special characters and escapes
+
+-   Special characters have a function and will be interpreted by R in that way
+-   The most obvious one is the quote itself "
+
+. . .
+
+-   To tell R that we want it to be interpreted as a normal character, we use the backslash  as an escape
+
+. . .
+
+```{r echo = T}
+"This is a quote\""
+```
+
+. . .
+
+-   Other characters with special functions: `\*.(){}\[\]-` etc.
+
+------------------------------------------------------------------------
+
+## Regular expressions
+
+-   A way of defining patters in strings
+-   Perfect for extracting data (from semi-structured data)
+-   You don't need to learn everything! Just a few basics will help us a lot to collect the data we want.
+
+------------------------------------------------------------------------
+
+## Examples for using regular expressions
+
+-   We have a full name in our dataset, but we want the first and last names separately:
+    -   `Smith, Charlie` -\> `Smith` + `Charlie`
+
+. . .
+
+-   We want to extract the date from a paragraph of text:
+    -   `The article was published on 15 July 2012.` -\> `15 July 2012`
+
+------------------------------------------------------------------------
+
+## The `stringr` package
+
+-   `str_c(character_vector)` combines two or more character vectors
+
+. . .
+
+-   `str_extract(string, pattern)` extracts a part of a string that matches the pattern provided.
+
+. . .
+
+-   `str_detect(string, pattern)` returns TRUE when the pattern is present in the string, otherwise FALSE
+
+. . .
+
+-   `str_remove(), str_extract_all(), str_replace(), str_to_lower(), str_split()`...
+
+------------------------------------------------------------------------
+
+## Basic regex patterns
+
+-   Normal characters only match exactly
+
+. . .
+
+```{r echo = T}
+library(babynames)
+str_view(fruit, "berry", match = NA)
+```
+
+------------------------------------------------------------------------
+
+## Basic regex patterns
+
+-   Normal characters only match exactly
+
+. . .
+
+```{r echo = T}
+str_view("automated web data collection", "data", match = NA)
+```
+
+------------------------------------------------------------------------
+
+## Punctuation
+
+-   `.`, `+`, `*`, `[`, `]`, and `?` have special meanings.
+-   E.g. `.` matches any character
+
+. . .
+
+```{r echo = T}
+str_view(c("Humboldt University", "Free University", "Technical University"), ".......University", match = NA)
+```
+
+------------------------------------------------------------------------
+
+## Quantifiers
+
+-   Quantifiers control how many times a pattern can match:
+
+-   `?` makes a pattern optional (i.e. it matches 0 or 1 times)
+
+-   `+` lets a pattern repeat (i.e. it matches at least once)
+
+-   `*` lets a pattern be optional or repeat (i.e. it matches any number of times, including 0).
+
+. . .
+
+```{r echo = T}
+letters <- c("aaaab", "bbbbccd", "bbaa")
+
+str_extract(letters, "a+")
+
+str_extract(letters, "a?")
+```
+
+. . .
+
+```{r echo = T}
+str_extract(letters, ".*")
+```
+
+## Character classes
+
+-   ... are defined by `[]` and let you match a set of characters
+-   `[abc]`, or `[a-z]`, or `[A-Z]`
+-   Use `^` to exclude these characters: `[^abc]`
+
+. . .
+
+```{r echo = T}
+str_view(c("abcdef123", "abc23", "cdefghik345"), "[abc]", match = NA)
+```
+
+. . .
+
+```{r echo = T}
+str_view(c("abcdef123", "abc23", "cdefghik345"), "[^0-9]", match = NA)
+```
+
+## Anchors
+
+-   Help you match only patterns at the start or end of a string
+-   `^` for the start, `$` for the end
+
+. . .
+
+```{r echo = T}
+str_view(c("mr charlie smith", "ms charlie palmr"), "mr", match = NA)
+```
+
+. . .
+
+```{r echo = T}
+str_view(c("mr charlie smith", "ms charlie palmr"), "^mr", match = NA)
+```
+
+## More quantifiers
+
+-   We can specify, how often something has to appear using `{}`
+    -   `{n}` matches exactly n times.
+    -   `{n,}` matches at least n times.
+    -   `{n,m}` matches between n and m times.
+
+. . .
+
+```{r echo = T}
+str_view(c("aaaa", "aaaaaaa", "aaaaaaaa"), "a{5}", match = NA)
+```
+
+## Lookaheads/lookbehinds
+
+-   We can specify a pattern, by saying what pattern comes before/after
+-   Positive lookahead: `(=>)`
+-   Positive lookbehind: `(?<=)`
+
+. . .
+
+```{r echo = T}
+mytexts <- c("I don't want this text." ,"I only want this text. Contact: Twitter @something")
+str_view(mytexts, ".*(?=Contact:)", match = NA)
+```
+
+. . .
+
+```{r echo = T}
+myurls <- c("This is not a URL.", "URL: www.ineedthisurl.com")
+str_view(myurls, "(?<=URL: ).*", match = NA)
+```
+
+## Live coding
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Next week
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+Readings :book:
+
+-   Automated Data Collection with R
+    -   [Ch. 9 (until 9.1.4), and Ch. 9.2.2](https://doi.org/10.1002/9781118834732.ch9)
+-   Grolemund and Wickham (2023)
+    -   [Ch. 28](https://r4ds.hadley.nz/strings.html)
+:::
+
+::: {.column width="50%"}
+`Coding` :robot:
+
+-   Exercise 04
+-   Play Regexone
+-   Munzert et al. 2014, [Ch. 9](https://doi.org/10.1002/9781118834732.ch2), Problems 1-14 (read, don't solve!)
+:::
+:::
+
+## Tips for the exercises
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:

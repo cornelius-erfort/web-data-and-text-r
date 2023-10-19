@@ -1,0 +1,203 @@
+---
+title: "Week 08: Recap, and more advanced approaches"
+format: 
+  revealjs:
+     logo: hu.png
+     css: logo.css
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     theme: default
+  pdf: default
+editor: visual
+footer: "Automated Web Data Collection And Text As Data (Erfort 2023)"
+date: "2023-06-06"
+date-format: long
+from: markdown+emoji
+---
+
+```{r install, echo = F}
+# install.packages("rmarkdown")
+# install.packages("tidyverse")
+# install.packages("qrcode")
+
+library(tidyverse)
+library(rmarkdown)
+library(qrcode)
+library(rvest)
+library(xml2)
+
+```
+
+## Plan for today
+
+-   Housekeeping :broom:
+-   Exercise for today
+-   Recap of things we learned so far
+-   More helpful tools
+-   Live coding
+
+## Housekeeping :broom:
+
+-   Any questions?
+-   Assignment from last week
+
+## Recap
+
+Last week, we...
+
+-   Extracted text from PDFs (and scanned text)
+-   Used regular expressions on the extracted texts
+
+#### Exercise 07
+
+------------------------------------------------------------------------
+
+## Recap of Week 01 - 07
+
+------------------------------------------------------------------------
+
+### Recap: The basics of R
+
+-   The necessary basics to store, manipulate, and use data
+-   Classes, objects, vectors, functions
+
+------------------------------------------------------------------------
+
+### Recap: HTML
+
+-   The hidden structure of websites
+-   Helps us locate the data we want via CSS paths
+-   We used `rvest` to filter out HTML elements
+-   Get specific text or links from a website
+
+------------------------------------------------------------------------
+
+### Recap: Regular expressions
+
+-   We learned how to specify regular expressions
+-   We used`stringr` to extract patterns from text
+-   This helped us extract data from websites, where CSS paths didn't work
+-   In Week 07, regular expressions also helped us process text data
+
+------------------------------------------------------------------------
+
+### Recap: Webscraping
+
+-   With for loops, we started automating data collection from multiple URLs
+-   When websites are similar, we can use the same code
+
+------------------------------------------------------------------------
+
+### Recap: APIs, JSON and other file formats
+
+-   We took a step back, and looked APIs
+-   APIs make webscraping much easier
+-   We learned how to handle JSON files
+
+------------------------------------------------------------------------
+
+### Recap: OCR and PDFs
+
+-   Access text data from messy file formats
+-   Extract text from PDFs (`pdftools`, `tabulizer`)
+-   Make text in scanned images machine readable using OCR
+-   Use regular expressions to extract data from text
+
+------------------------------------------------------------------------
+
+![](workflow2.png){.absolute top="20" width="1600"}
+
+## This week
+
+-   File management
+-   Progress feedback
+-   Errors
+-   Saving data
+
+## File management
+
+-   `list.files()`
+-   `dir.create()`
+-   `file.exists()`
+
+## Progress feedback
+
+-   When we use loops with many iterations, we want to know that there is progress.
+-   We will learn a simple way today.
+
+## Errors
+
+-   Errors can always occur
+-   We don't want to start from the beginning
+-   We want our code to continue despite errors
+
+## Saving data
+
+-   `writeRDS()`, `readRDS()`
+-   `write.csv()`
+-   `openxlsx::write.xlsx()`
+-   `haven::write_dta()`
+
+## Dynamic websites
+
+-   What are dynamic websites?
+-   With (`RSelenium`), you can automate a browser.
+-   But this is inefficient.
+
+## `httr` package
+
+-   HTTP protocol
+-   GET (header) and POST (header and body) requests
+-   Cookies, authentication
+-   <https://www.parlament.gv.at/recherchieren/personen/nationalrat/?WFW_002STEP=1000&WFW_002NRBR=NR&WFW_002GP=AKT&WFW_002R_WF=FR&WFW_002R_PBW=WK&WFW_002M=M&WFW_002W=W&WFW_002page=3>
+
+## Access restrictions
+
+-   Password protection, user account, captchas, ...
+-   More next week.
+
+## Live coding
+
+------------------------------------------------------------------------
+
+## Takeaways this week
+
+-   When we download many files, we can save time by making our code more flexible.
+-   We might need additional tools to scrape some websites, e.g. dynamic websites.
+
+------------------------------------------------------------------------
+
+## Next week
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+Readings :book:
+
+-   [Munzert et al. (2014) Chapter 9.3](https://doi.org/10.1002/9781118834732.ch9)
+
+-   [Gold, Nicholas (2020): Using Twitter Data in Research](https://www.ucl.ac.uk/data-protection/sites/data-protection/files/using-twitter-research-v1.0.pdf)
+
+-   [Brehm, Elke (2022): Guidelines zum Text und Data Mining für Forschungszwecke in Deutschland, S. 5-9](https://oa.tib.eu/renate/bitstream/123456789/10352/3/GuidelinesTDM_NFDI4Ing_oeff.pdf)
+:::
+
+::: {.column width="50%"}
+`Coding` :robot:
+
+-   Exercise 08
+:::
+:::
+
+## Tips for the exercises
+
+-   Coding is trial and error!
+-   Build your code step by step
+-   Google error messages
+-   Ask ChatGPT for help
+-   Help each other, ask questions on Moodle
+
+------------------------------------------------------------------------
+
+See you next week :wave:
